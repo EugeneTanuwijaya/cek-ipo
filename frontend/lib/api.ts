@@ -1,8 +1,16 @@
 const API = process.env.API_URL ?? 'http://localhost:8000';
 
+/** Error API dengan kode status HTTP, agar pemanggil bisa membedakan 404 dari kegagalan lain. */
+export class ApiError extends Error {
+  constructor(public readonly status: number, path: string) {
+    super(`API ${status}: ${path}`);
+    this.name = 'ApiError';
+  }
+}
+
 async function get<T>(path: string): Promise<T> {
   const r = await fetch(`${API}${path}`, { next: { revalidate: 3600 } });
-  if (!r.ok) throw new Error(`API ${r.status}: ${path}`);
+  if (!r.ok) throw new ApiError(r.status, path);
   return r.json();
 }
 

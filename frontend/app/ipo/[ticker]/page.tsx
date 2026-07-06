@@ -1,22 +1,23 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { getIpo, type IpoDetail } from '@/lib/api';
+import { ApiError, getIpo, type IpoDetail } from '@/lib/api';
 import { rupiah, pct } from '@/lib/format';
 import AraCalculator from '@/components/AraCalculator';
 import PenjatahanCalculator from '@/components/PenjatahanCalculator';
 
-// Halaman detail butuh data live dari backend — jangan coba prerender statis
-// saat build (build-time fetch akan gagal bila backend tidak berjalan).
-export const dynamic = 'force-dynamic';
+// Tanpa generateStaticParams: rute dirender on-demand lalu di-cache ISR
+// (revalidate 3600 detik dari fetch di lib/api.ts).
 
 type Params = Promise<{ ticker: string }>;
 
+// 404 dari API → null (halaman memanggil notFound()); kegagalan lain
+// (backend mati, 5xx) dilempar ulang ke error boundary (Task 14).
 async function loadIpo(ticker: string): Promise<IpoDetail | null> {
   try {
     return await getIpo(ticker);
   } catch (e) {
-    if (e instanceof Error && e.message.startsWith('API 404')) return null;
+    if (e instanceof ApiError && e.status === 404) return null;
     throw e;
   }
 }
@@ -72,10 +73,10 @@ export default async function IpoDetailPage({ params }: { params: Params }) {
         <h2 className="mb-2 text-lg font-semibold">Jadwal</h2>
         <table className="w-full text-sm">
           <tbody>
-            <tr><td className="pr-4 text-gray-500">Bookbuilding</td><td>{ipo.bookbuilding_start ?? '—'} s/d {ipo.bookbuilding_end ?? '—'}</td></tr>
-            <tr><td className="pr-4 text-gray-500">Penawaran</td><td>{ipo.offering_start ?? '—'} s/d {ipo.offering_end ?? '—'}</td></tr>
-            <tr><td className="pr-4 text-gray-500">Penjatahan</td><td>{ipo.allotment_date ?? '—'}</td></tr>
-            <tr><td className="pr-4 text-gray-500">Listing</td><td>{ipo.listing_date ?? '—'}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">Bookbuilding</th><td>{ipo.bookbuilding_start ?? '—'} s/d {ipo.bookbuilding_end ?? '—'}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">Penawaran</th><td>{ipo.offering_start ?? '—'} s/d {ipo.offering_end ?? '—'}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">Penjatahan</th><td>{ipo.allotment_date ?? '—'}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">Listing</th><td>{ipo.listing_date ?? '—'}</td></tr>
           </tbody>
         </table>
       </section>
@@ -84,12 +85,12 @@ export default async function IpoDetailPage({ params }: { params: Params }) {
         <h2 className="mb-2 text-lg font-semibold">Penawaran</h2>
         <table className="w-full text-sm">
           <tbody>
-            <tr><td className="pr-4 text-gray-500">Harga</td><td>{hargaLabel}</td></tr>
-            <tr><td className="pr-4 text-gray-500">Saham ditawarkan</td><td>{ipo.shares_offered != null ? ipo.shares_offered.toLocaleString('id-ID') : '—'}</td></tr>
-            <tr><td className="pr-4 text-gray-500">Lot ditawarkan</td><td>{ipo.lots_offered != null ? ipo.lots_offered.toLocaleString('id-ID') : '—'}</td></tr>
-            <tr><td className="pr-4 text-gray-500">Nilai emisi</td><td>{ipo.ipo_value != null ? rupiah(ipo.ipo_value) : '—'}</td></tr>
-            <tr><td className="pr-4 text-gray-500">% modal</td><td>{ipo.percent_of_capital != null ? pct(ipo.percent_of_capital) : '—'}</td></tr>
-            <tr><td className="pr-4 text-gray-500">Porsi pooling</td><td>{ipo.pooling_pct != null ? pct(ipo.pooling_pct) : '—'}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">Harga</th><td>{hargaLabel}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">Saham ditawarkan</th><td>{ipo.shares_offered != null ? ipo.shares_offered.toLocaleString('id-ID') : '—'}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">Lot ditawarkan</th><td>{ipo.lots_offered != null ? ipo.lots_offered.toLocaleString('id-ID') : '—'}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">Nilai emisi</th><td>{ipo.ipo_value != null ? rupiah(ipo.ipo_value) : '—'}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">% modal</th><td>{ipo.percent_of_capital != null ? pct(ipo.percent_of_capital) : '—'}</td></tr>
+            <tr><th scope="row" className="pr-4 text-left font-normal text-gray-500">Porsi pooling</th><td>{ipo.pooling_pct != null ? pct(ipo.pooling_pct) : '—'}</td></tr>
           </tbody>
         </table>
       </section>
