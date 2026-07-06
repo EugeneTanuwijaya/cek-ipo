@@ -43,10 +43,20 @@ describe('estimateAllotment', () => {
   it('minimal 1 lot bila kebagian', () => {
     const r = estimateAllotment({ orderLots: 5, ...base });
     if ('error' in r) throw new Error(r.error);
-    expect(r.estimatedLots).toBe(1);                        // 5/10 = 0.5 → 1 lot
+    expect(r.estimatedLots).toBe(1);                        // floor(5/10)=0 → dinaikkan ke 1 lot
+  });
+  it('pecahan lot dibulatkan ke bawah (estimasi konservatif)', () => {
+    const r = estimateAllotment({ orderLots: 16, ...base });
+    if ('error' in r) throw new Error(r.error);
+    expect(r.estimatedLots).toBe(1);                        // floor(16/10)=1, bukan round → 2
   });
   it('pesanan > 10% nilai penawaran ditolak', () => {
     const r = estimateAllotment({ orderLots: 900_000, ...base }); // 900rb lot ×100×100 = 9 M > 10%×80 M
     expect('error' in r).toBe(true);
+  });
+  it('input tidak valid ditolak dengan pesan error, bukan crash', () => {
+    expect('error' in estimateAllotment({ orderLots: 100, price: 100, ipoValue: NaN, oversub: 10 })).toBe(true);
+    expect('error' in estimateAllotment({ orderLots: 100, price: -100, ipoValue: 80 * B, oversub: 10 })).toBe(true);
+    expect('error' in estimateAllotment({ orderLots: 100, price: 100, ipoValue: 80 * B, oversub: NaN })).toBe(true);
   });
 });
