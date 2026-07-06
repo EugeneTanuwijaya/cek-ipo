@@ -91,10 +91,32 @@ def _num(text: str | None) -> int | None:
     return int(digits) if digits else None
 
 
+_THOUSANDS_DOTS_RE = re.compile(r"\d{1,3}(\.\d{3})+")
+
+
 def _pct(text: str | None) -> float | None:
+    """Parse a percentage value, tolerating Indonesian number formatting.
+
+    Handles: "13", "13,5" (Indonesian decimal comma), "13.5" (plain decimal
+    point), an optional trailing "%", and dots as thousands separators only
+    when the digit grouping makes that unambiguous (every dot followed by
+    exactly 3 digits, e.g. "1.000" or "1.000.000"); any other dot is treated
+    as a decimal point.
+    """
     if not text:
         return None
-    t = text.strip().replace(".", "").replace(",", ".")
+    t = text.strip()
+    if t.endswith("%"):
+        t = t[:-1].strip()
+    if not t:
+        return None
+    if "," in t:
+        # Indonesian format: comma is the decimal separator; any dots are
+        # thousands separators ("1.234,5" -> 1234.5).
+        t = t.replace(".", "").replace(",", ".")
+    elif _THOUSANDS_DOTS_RE.fullmatch(t):
+        # Dots are unambiguously thousands separators ("1.000" -> 1000.0).
+        t = t.replace(".", "")
     try:
         return float(t)
     except ValueError:
@@ -211,6 +233,12 @@ def _underwriters(soup: BeautifulSoup) -> list[dict]:
 # mapped to the plan's canonical Ipo.status values. Labels with no clear
 # canonical equivalent (Postpone, Canceled) map to None -- Task 5 decides
 # what to do with those.
+#
+# Fixture coverage: "closed" is verified by detail_347.html (SUPA) and
+# "allotment" by detail_351.html (EMMI). The remaining mappings
+# ("pre-effective", "book building", "waiting for offering", "offering")
+# are inferred from the index page's status filter options and are NOT yet
+# verified against a real detail-page fixture in that state.
 _STATUS_MAP = {
     "pre-effective": "bookbuilding",
     "book building": "bookbuilding",
@@ -222,11 +250,20 @@ _STATUS_MAP = {
 
 EMPTY = dict(
     ticker=None, company_name=None, sector=None, description=None,
+    logo_url=None, prospectus_url=None,
     price_low=None, price_high=None, final_price=None, shares_offered=None,
     percent_of_capital=None, bookbuilding_start=None, bookbuilding_end=None,
     offering_start=None, offering_end=None, allotment_date=None,
     listing_date=None, status=None, pooling_pct=None, underwriters=None,
 )
+
+
+def _abs_url(path: str | None) -> str | None:
+    if not path:
+        return None
+    if path.startswith(("http://", "https://")):
+        return path
+    return BASE + path
 
 
 def parse_detail(html: str) -> dict:
@@ -261,6 +298,16 @@ def parse_detail(html: str) -> dict:
         d["offering_start"], d["offering_end"] = _date_range(offer[0])
         if len(offer) > 1:
             d["final_price"] = _num(offer[1])
+
+    logo_img = soup.find("img", class_="img-detail")
+    if logo_img and logo_img.get("src"):
+        d["logo_url"] = _abs_url(logo_img["src"])
+
+    # First a.prospec link is the full prospectus (type=); the second, when
+    # present, is the summary prospectus (type=summary).
+    prospectus_a = soup.find("a", class_="prospec")
+    if prospectus_a and prospectus_a.get("href"):
+        d["prospectus_url"] = _abs_url(prospectus_a["href"])
 
     d["allotment_date"] = _date(_label_value(soup, "Penjatahan"))
     d["listing_date"] = _date(_label_value(soup, "Tanggal Pencatatan", "Listing Date"))
