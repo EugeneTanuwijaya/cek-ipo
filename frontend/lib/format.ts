@@ -1,10 +1,13 @@
 const idr = new Intl.NumberFormat('id-ID');
 
 export function rupiah(n: number): string {
-  return 'Rp' + idr.format(Math.round(n));
+  const v = Math.round(n) + 0;
+  return (v < 0 ? '-Rp' : 'Rp') + idr.format(Math.abs(v));
 }
 
 export function pct(n: number, digits = 1): string {
-  const s = n.toLocaleString('id-ID', { minimumFractionDigits: digits, maximumFractionDigits: digits });
-  return (n >= 0 ? '+' : '') + s + '%';
+  const factor = 10 ** digits;
+  const r = Math.round(n * factor) / factor + 0;
+  const s = r.toLocaleString('id-ID', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  return (r >= 0 ? '+' : '') + s + '%';
 }
