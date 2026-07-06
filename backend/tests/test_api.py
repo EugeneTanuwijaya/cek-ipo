@@ -3,7 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 from app.db import get_db
 from app.main import app
-from app.models import Ipo, IpoPerformance, Underwriter
+from app.models import Ipo, IpoPerformance, Underwriter, ipo_underwriters
 
 @pytest.fixture
 def client(session):
@@ -30,6 +30,13 @@ def seed(session):
             price_low=200, price_high=300, shares_offered=100_000_000)
     b.underwriters.append(uw)
     session.add_all([a, b]); session.commit()
+    # Mark CC as lead on AAAA via the association row directly (same pattern
+    # as the scraper; relationship append leaves the column default False).
+    session.execute(
+        ipo_underwriters.update()
+        .where(ipo_underwriters.c.ipo_id == a.id, ipo_underwriters.c.underwriter_id == uw.id)
+        .values(is_lead=True))
+    session.commit()
 
 def test_list_and_filter(client, seed):
     assert client.get("/api/ipos").json()["total"] == 2
@@ -40,7 +47,9 @@ def test_list_and_filter(client, seed):
 def test_detail(client, seed):
     d = client.get("/api/ipos/AAAA").json()
     assert d["lots_offered"] == 5_000_000
+    assert d["day1_return_pct"] == 70.0
     assert d["underwriters"][0]["code"] == "CC"
+    assert d["underwriters"][0]["is_lead"] is True
     assert d["performance"]["day1_ara"] is True
     assert client.get("/api/ipos/ZZZZ").status_code == 404
 

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.db import get_db
-from app.models import Ipo
+from app.models import Ipo, ipo_underwriters
 from app.schemas import IpoDetail, IpoSummary
 
 router = APIRouter(prefix="/api/ipos", tags=["ipos"])
@@ -30,4 +31,12 @@ def get_ipo(ticker: str, db: Session = Depends(get_db)):
     ipo = db.query(Ipo).filter(Ipo.ticker == ticker.upper()).one_or_none()
     if not ipo:
         raise HTTPException(404, "IPO tidak ditemukan")
-    return IpoDetail.model_validate(ipo, from_attributes=True)
+    detail = IpoDetail.model_validate(ipo, from_attributes=True)
+    detail.day1_return_pct = ipo.performance.day1_return_pct if ipo.performance else None
+    # is_lead lives on the association table, not on Underwriter rows.
+    lead_by_uw_id = dict(db.execute(
+        select(ipo_underwriters.c.underwriter_id, ipo_underwriters.c.is_lead)
+        .where(ipo_underwriters.c.ipo_id == ipo.id)).all())
+    for uw, out in zip(ipo.underwriters, detail.underwriters):
+        out.is_lead = bool(lead_by_uw_id.get(uw.id, False))
+    return detail

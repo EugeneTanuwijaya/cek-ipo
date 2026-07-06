@@ -5,6 +5,7 @@ class UnderwriterOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     code: str
     name: str
+    is_lead: bool = False
 
 class PerformanceOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
