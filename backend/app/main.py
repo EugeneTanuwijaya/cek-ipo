@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from app.db import init_db
+from app.routers import admin, ipos, underwriters
 
-app = FastAPI(title="Saham IPO API")
 init_db()
-
-@app.get("/api/health")
-def health():
-    return {"status": "ok", "last_scrapes": {}}
+app = FastAPI(title="Saham IPO API")
+app.include_router(ipos.router)
+app.include_router(underwriters.router)
+app.include_router(admin.router)
