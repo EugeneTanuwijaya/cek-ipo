@@ -35,7 +35,7 @@ Pengunjung ── HTTPS ──> Reverse proxy ──> Next.js (frontend, SSR)
 - **Next.js (TypeScript, App Router)** — murni frontend; SSR/ISR untuk SEO. Tidak menyentuh database. Kalkulator berjalan sepenuhnya client-side.
 - **SQLite** via SQLAlchemy — cukup untuk skala data (ratusan IPO); jalur migrasi ke PostgreSQL terbuka karena akses via SQLAlchemy.
 - **Repo**: monorepo — `backend/` (FastAPI) dan `frontend/` (Next.js).
-- **Deploy**: systemd unit per aplikasi atau Docker Compose (diputuskan di rencana implementasi).
+- **Deploy**: Docker Compose (satu service per aplikasi + reverse proxy) — reproducible di VPS mana pun dan menyatukan Python + Node dalam satu perintah deploy.
 
 ## 3. Model Data
 
@@ -126,7 +126,7 @@ Output:
 - Proyeksi berjenjang N hari (default 5): ARA hari ke-n dihitung dari harga ARA hari ke-(n-1) dengan persentase reguler (hari ≥2 bukan lagi 2×); demikian juga ARB.
 - Modal = harga × lot × 100; potensi profit/loss (Rp dan %) di tiap skenario harian.
 
-Validasi input: lot bilangan bulat positif; harga Rp50–Rp jutaan (batas wajar); pesan error Bahasa Indonesia.
+Validasi input: lot bilangan bulat positif; harga Rp50–Rp1.000.000 (batas wajar); pesan error Bahasa Indonesia.
 
 ### 7b. Kalkulator estimasi penjatahan (SEOJK 25/SEOJK.04/2025)
 
