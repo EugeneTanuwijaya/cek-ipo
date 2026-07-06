@@ -20,3 +20,13 @@ def test_day1_ara_price():
 def test_hit_ara_day1():
     assert hit_ara_day1(350, 525) is True
     assert hit_ara_day1(350, 500) is False
+
+def test_round_down_to_tick_truncates():
+    from app.rules import round_down_to_tick
+    assert round_down_to_tick(229.5) == 228   # tick 2
+    assert round_down_to_tick(178.9) == 178   # tick 1
+    assert round_down_to_tick(524.9) == 520   # tick 5
+
+def test_day1_ara_price_rounds_down():
+    from app.rules import day1_ara_price
+    assert day1_ara_price(199) == 338         # 199*1.70=338.3 -> tick 2 -> 338
