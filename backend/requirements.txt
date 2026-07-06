@@ -6,4 +6,6 @@ requests
 beautifulsoup4
 pydantic-settings
 pytest
-httpx
+# httpx2 (not legacy httpx): starlette>=1.3 testclient prefers httpx2 and emits
+# StarletteDeprecationWarning when falling back to httpx.
+httpx2
