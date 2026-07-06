@@ -8,5 +8,6 @@ from app.db import Base
 def session():
     engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(engine)
-    with sessionmaker(bind=engine)() as s:
+    # autoflush=False mirrors the production SessionLocal (app/db.py)
+    with sessionmaker(bind=engine, autoflush=False)() as s:
         yield s

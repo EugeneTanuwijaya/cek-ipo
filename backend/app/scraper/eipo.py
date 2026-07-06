@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
-from app.models import Ipo, ScrapeRun, Underwriter
+from app.models import Ipo, ScrapeRun, Underwriter, ipo_underwriters
 from app.scraper.http import BASE, fetch
 from app.scraper.parsers import parse_detail, parse_index
 
@@ -20,10 +20,27 @@ def upsert_detail(db: Session, eipo_id: int, data: dict, source_url: str | None 
         ipo.source_url = source_url
     ipo.scraped_at = datetime.now(timezone.utc)
     for u in uws:
-        uw = db.query(Underwriter).filter_by(code=u["code"]).one_or_none() \
-            or Underwriter(code=u["code"], name=u["name"])
+        uw = db.query(Underwriter).filter_by(code=u["code"]).one_or_none()
+        if uw is None:
+            uw = Underwriter(code=u["code"], name=u["name"])
+            db.add(uw)
+            # SessionLocal runs with autoflush=False: flush now so the next
+            # lookup of the same code (later IPO, same run) sees this row
+            # instead of inserting a UNIQUE-violating duplicate.
+            db.flush()
         if uw not in ipo.underwriters:
             ipo.underwriters.append(uw)
+        # The plain relationship append inserts the association row with the
+        # column default is_lead=False; persist the parsed flag explicitly.
+        db.flush()  # ensure ipo.id/uw.id and the association row exist
+        db.execute(
+            ipo_underwriters.update()
+            .where(
+                ipo_underwriters.c.ipo_id == ipo.id,
+                ipo_underwriters.c.underwriter_id == uw.id,
+            )
+            .values(is_lead=bool(u.get("is_lead", False)))
+        )
     return ipo
 
 
@@ -40,7 +57,11 @@ def sync_ipos(db: Session, fetch_fn=fetch) -> ScrapeRun:
             try:
                 upsert_detail(db, e.eipo_id, parse_detail(fetch_fn(e.url)), source_url=e.url)
                 run.items_processed += 1
+                db.commit()  # persist this item; keeps earlier items safe from a later bad one
             except Exception as ex:  # per-item: warning, lanjut
+                # A DB-level failure leaves the transaction unusable; roll it
+                # back so it does not poison later items or the final commit.
+                db.rollback()
                 warnings.append(f"{e.eipo_id}: {ex}")
         run.status = "partial" if warnings else "success"
         run.message = "; ".join(warnings) or None

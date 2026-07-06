@@ -1,6 +1,8 @@
 from pathlib import Path
 
-from app.models import Ipo, ScrapeRun, Underwriter
+from sqlalchemy import select
+
+from app.models import Ipo, ScrapeRun, Underwriter, ipo_underwriters
 from app.scraper.eipo import sync_ipos, upsert_detail
 
 FIX = Path(__file__).parent / "fixtures"
@@ -42,6 +44,32 @@ def test_listed_ipo_not_rescraped(session):
         calls.append(url); return fake_fetch(url)
     sync_ipos(session, fetch_fn=counting_fetch)
     assert all("/ipo/index" in u for u in calls)      # hanya indeks, tanpa detail
+
+
+def test_shared_new_underwriter_across_ipos_one_run(session):
+    # Regression: production SessionLocal uses autoflush=False, so a new
+    # Underwriter created for one IPO must be visible (flushed) when the next
+    # IPO in the same run looks up the same code -- otherwise the final
+    # commit dies with UNIQUE(underwriters.code).
+    uw = {"code": "ZZ", "name": "Zeta Sekuritas", "is_lead": False}
+    upsert_detail(session, 9001, {"underwriters": [dict(uw)]})
+    upsert_detail(session, 9002, {"underwriters": [dict(uw)]})
+    session.commit()
+    assert session.query(Underwriter).filter_by(code="ZZ").count() == 1
+    assert session.query(Ipo).count() == 2
+
+
+def test_is_lead_persisted(session):
+    sync_ipos(session, fetch_fn=fake_fetch)
+    supa = session.query(Ipo).filter_by(eipo_id=347).one()
+    rows = dict(session.execute(
+        select(ipo_underwriters.c.underwriter_id, ipo_underwriters.c.is_lead)
+        .where(ipo_underwriters.c.ipo_id == supa.id)
+    ).all())
+    cc = session.query(Underwriter).filter_by(code="CC").one()   # Partisipan Admin (lead)
+    lg = session.query(Underwriter).filter_by(code="LG").one()   # plain participant
+    assert rows[cc.id] is True
+    assert rows[lg.id] is False
 
 
 def test_failed_fetch_logged_data_kept(session):
