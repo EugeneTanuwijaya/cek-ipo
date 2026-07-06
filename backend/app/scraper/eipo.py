@@ -1,0 +1,52 @@
+from datetime import datetime, timezone
+
+from sqlalchemy.orm import Session
+
+from app.models import Ipo, ScrapeRun, Underwriter
+from app.scraper.http import BASE, fetch
+from app.scraper.parsers import parse_detail, parse_index
+
+INDEX_URL = f"{BASE}/id/ipo/index"
+
+
+def upsert_detail(db: Session, eipo_id: int, data: dict, source_url: str | None = None) -> Ipo:
+    ipo = db.query(Ipo).filter_by(eipo_id=eipo_id).one_or_none() or Ipo(eipo_id=eipo_id)
+    db.add(ipo)  # attach before touching relationships, else autoflush errors on a transient object
+    uws = data.pop("underwriters", []) or []
+    for k, v in data.items():
+        if v is not None:
+            setattr(ipo, k, v)
+    if source_url:
+        ipo.source_url = source_url
+    ipo.scraped_at = datetime.now(timezone.utc)
+    for u in uws:
+        uw = db.query(Underwriter).filter_by(code=u["code"]).one_or_none() \
+            or Underwriter(code=u["code"], name=u["name"])
+        if uw not in ipo.underwriters:
+            ipo.underwriters.append(uw)
+    return ipo
+
+
+def sync_ipos(db: Session, fetch_fn=fetch) -> ScrapeRun:
+    run = ScrapeRun(kind="eipo")
+    db.add(run)
+    db.commit()
+    warnings = []
+    try:
+        entries = parse_index(fetch_fn(INDEX_URL))
+        listed = {i.eipo_id for i in db.query(Ipo).filter(Ipo.status == "listed")}
+        todo = [e for e in entries if e.eipo_id not in listed]
+        for e in todo:
+            try:
+                upsert_detail(db, e.eipo_id, parse_detail(fetch_fn(e.url)), source_url=e.url)
+                run.items_processed += 1
+            except Exception as ex:  # per-item: warning, lanjut
+                warnings.append(f"{e.eipo_id}: {ex}")
+        run.status = "partial" if warnings else "success"
+        run.message = "; ".join(warnings) or None
+    except Exception as ex:  # run-level: gagal total, data lama utuh
+        run.status = "failed"
+        run.message = str(ex)
+    run.finished_at = datetime.now(timezone.utc)
+    db.commit()
+    return run
