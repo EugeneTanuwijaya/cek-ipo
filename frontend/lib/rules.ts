@@ -1,5 +1,28 @@
-// Aturan BEI per Juli 2026 — Peraturan II-A; ARB 15% seragam sejak 8 Apr 2025.
-// Diverifikasi ulang terhadap teks resmi pada Task 12. Ubah di sini bila BEI merevisi.
+// Aturan BEI per Juli 2026 — Peraturan Nomor II-A tentang Perdagangan Efek
+// Bersifat Ekuitas, SK Direksi BEI Kep-00003/BEI/04-2025 (berlaku sejak 8 Apr
+// 2025, menggantikan Kep-00055/BEI/03-2023). Diverifikasi ulang pada Task 12
+// (2026-07-07):
+// - araBands 35/25/20 (VI.7.1.2.1-3 pada teks 2023): TIDAK berubah oleh
+//   revisi 8 Apr 2025 — revisi itu hanya menyeragamkan ARB. Primer: teks PDF
+//   Kep-00055/BEI/03-2023 (idx.co.id) dibaca langsung (pypdf); dikonfirmasi
+//   masih berlaku oleh siaran pers BEI & liputan media (Kompas 14 Apr 2025,
+//   Kontan) yang hanya menyebut ARB yang diubah.
+// - arbFlatPct 15% seragam semua rentang: berlaku sejak 8 Apr 2025 (sebelumnya
+//   mengikuti tier ARA 35/25/20). Sumber: idx.co.id/id/berita/siaran-pers/2352
+//   (siaran pers BEI) + Kontan/Kompas/CNBC Indonesia (8 Apr 2025). Tidak ada
+//   perubahan lebih lanjut ditemukan sampai Juli 2026 (satu-satunya berita
+//   terbaru, suara.com 5 Jul 2026, adalah USULAN yang HANYA menyasar Papan
+//   Pemantauan Khusus, belum berlaku, dan tidak memengaruhi konstanta ini).
+// - day1Multiplier 2x berlaku untuk ARA **dan** ARB pada hari pertama IPO:
+//   dikonfirmasi oleh sumber sekunder pasca-8-Apr-2025 (Kompas 14 Apr 2025,
+//   mediaperbankan.com Mei 2025, CNBC Indonesia) yang konsisten menyebut
+//   "2 (dua) kali dari persentase batasan Auto Rejection" tanpa membedakan
+//   ARA/ARB. CATATAN: teks resmi Kep-00055/BEI/03-2023 (berlaku sebelum revisi
+//   8 Apr 2025) sebenarnya menetapkan 1x (diturunkan dari 2x sejak 13 Mar
+//   2020); PDF resmi Kep-00003/BEI/04-2025 tidak berhasil diunduh langsung
+//   (wplibrary.co.id & idx.co.id memblokir akses otomatis dgn 403) sehingga
+//   nilai 2x saat ini bersandar pada sumber sekunder yang konsisten, bukan
+//   teks primer — perlu diverifikasi ulang bila ada keraguan.
 export const AUTO_REJECT = {
   day1Multiplier: 2,
   minPrice: 50,
@@ -9,6 +32,9 @@ export const AUTO_REJECT = {
     { maxPrice: Infinity, pct: 0.2 },
   ],
   arbFlatPct: 0.15,
+  // Fraksi harga (VI.5.2.1-VI.5.2.5, Kep-00055/BEI/03-2023, tidak diubah oleh
+  // revisi 8 Apr 2025): <200→1; 200–<500→2; 500–<2000→5; 2000–<5000→10;
+  // ≥5000→25. Primer: teks PDF dibaca langsung (pypdf) pada Task 12.
   ticks: [
     { belowPrice: 200, tick: 1 },
     { belowPrice: 500, tick: 2 },
