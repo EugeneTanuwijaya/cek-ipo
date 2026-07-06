@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+apscheduler
+requests
+beautifulsoup4
+pydantic-settings
+pytest
+httpx
