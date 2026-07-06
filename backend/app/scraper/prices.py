@@ -43,7 +43,11 @@ def sync_prices(db: Session, http_get=_default_get) -> ScrapeRun:
                 day1_return_pct=(d1["close"] / ipo.final_price - 1) * 100,
                 day1_ara=hit_ara_day1(ipo.final_price, d1["close"])))
             run.items_processed += 1
+            db.commit()  # persist this item; keeps earlier items safe from a later bad one
         except Exception:
+            # A DB-level failure leaves the transaction unusable; roll it
+            # back so it does not poison later items or the final commit.
+            db.rollback()
             misses.append(ipo.ticker)
     run.status = "partial" if misses else "success"
     run.message = ("belum tersedia: " + ", ".join(misses)) if misses else None

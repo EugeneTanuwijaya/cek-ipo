@@ -1,4 +1,5 @@
 from datetime import date
+from sqlalchemy.orm import Session as SASession
 from app.models import Ipo, IpoPerformance
 from app.scraper.prices import sync_prices
 
@@ -36,3 +37,46 @@ def test_already_fetched_not_repeated(session):
     def counting(url): calls.append(url); return YAHOO_OK
     sync_prices(session, http_get=counting)
     assert calls == []
+
+def test_fetch_failure_on_one_item_keeps_others(session):
+    # Item 1 succeeds, item 2's fetch raises. With per-item commit, item 1 is
+    # already in the DB when item 2's failure triggers db.rollback(); if item 1
+    # had merely been staged (batch commit), that rollback would discard it.
+    # The fresh-session query proves the row is in the database, not just in
+    # this session's identity map. (StaticPool shares the single in-memory
+    # connection, so both sessions see the same DB; the check is meaningful
+    # because sync_prices has already ended its transaction when we query.)
+    ipo1 = make_listed(session)
+    make_listed(session, eipo_id=348, ticker="GAGL")
+    def flaky(url):
+        if "GAGL" in url:
+            raise RuntimeError("404")
+        return YAHOO_OK
+    run = sync_prices(session, http_get=flaky)
+    with SASession(session.get_bind()) as fresh:
+        perf1 = fresh.query(IpoPerformance).filter_by(ipo_id=ipo1.id).one()
+        assert perf1.day1_close == 490.0
+        assert fresh.query(IpoPerformance).count() == 1
+    assert run.status == "partial"
+    assert "GAGL" in run.message
+
+def test_db_level_failure_isolated_per_item(session):
+    # Sharp regression for per-item commit isolation: item 2's INSERT violates
+    # the ipo_performance.ipo_id unique constraint *at commit time*. The
+    # conflicting row is inserted from inside http_get — i.e. after the
+    # pending query has already selected ipo2 — so sync_prices still tries the
+    # duplicate insert. A single batch commit after the loop would raise
+    # IntegrityError uncaught and lose the other item's row too; per-item
+    # commit + rollback confines the damage to ipo2.
+    ipo1 = make_listed(session)
+    ipo2 = make_listed(session, eipo_id=348, ticker="DUPL")
+    def http_get(url):
+        if "DUPL" in url:
+            session.add(IpoPerformance(ipo_id=ipo2.id, day1_close=1.0))
+            session.commit()
+        return YAHOO_OK
+    run = sync_prices(session, http_get=http_get)   # must not raise
+    perf1 = session.query(IpoPerformance).filter_by(ipo_id=ipo1.id).one()
+    assert perf1.day1_close == 490.0                # item 1 committed, not lost
+    assert run.status == "partial"
+    assert "DUPL" in run.message
