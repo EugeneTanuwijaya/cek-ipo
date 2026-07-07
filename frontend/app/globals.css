@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ink: #f1f0e8;
+  --color-ink-soft: #ffffff;
+  --color-ink-line: #e4e2d8;
+  --color-fog: #11181c;
+  --color-mute: #5f6a70;
+  --color-ember: #2c3e2d;
+  --color-ember-soft: #3d5c3f;
+
+  --color-grass: #0e793c;
+  --color-grass-bg: #e8faf0;
+  --color-grass-line: #a2e9c1;
+  --color-grass-solid: #00a63e;
+  --color-grape: #7c3aed;
+  --color-grape-bg: #f4f3fb;
+  --color-grape-line: #d8cef2;
+  --color-coral: #b91c1c;
+  --color-coral-bg: #fdf0ef;
+  --color-coral-line: #f3c9c5;
+  --color-coral-solid: #dc2626;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Georgia, "Times New Roman", Times, serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-fog);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: var(--color-ember);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-fog);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ponytail: SPA route transitions need experimental.viewTransition in next.config
+   to actually fire; CSS is harmless (no-op) until that's turned on. */
+::view-transition-old(root) { animation: 200ms ease both paper-fade-out; }
+::view-transition-new(root) { animation: 200ms ease both paper-fade-in; }
+@keyframes paper-fade-out { to { opacity: 0; } }
+@keyframes paper-fade-in { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }
