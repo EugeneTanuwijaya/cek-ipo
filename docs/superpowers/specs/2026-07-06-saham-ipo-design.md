@@ -3,6 +3,24 @@
 Tanggal: 2026-07-06
 Status: Disetujui untuk perencanaan implementasi
 
+## Errata (post-implementasi)
+
+Catatan berikut ditambahkan setelah implementasi selesai (v0.1.0). Bagian asli
+di bawah **tidak diubah** agar riwayat keputusan tetap jujur — anggap catatan
+ini sebagai koreksi yang menimpa (override) teks aslinya.
+
+1. **Multiplier hari-1 IPO adalah 1×, bukan 2×** seperti tertulis di §7a
+   ("batas auto rejection = 2× persentase reguler"). Dibuktikan empiris pada
+   verifikasi akhir (Task 16): dari 225 IPO dengan data hari-1 nyata, return
+   maksimum tepat 35,00%; 7 IPO yang ARA hari-1 terkunci persis di batas 1×.
+   Kode (`backend/app/rules.py`, `frontend/lib/rules.ts`) memakai 1×.
+   **JANGAN "memperbaiki" kembali ke 2×.** Commit rujukan: `1b8957f`.
+2. Contoh angka ARB di plan Task 10 untuk IPO hari-1 350 (`arbPrice`) yang
+   tertulis **245** salah secara aritmatika terlepas dari isu multiplier di
+   atas: 245 bukan kelipatan fraksi harga Rp2 yang valid untuk rentang
+   Rp200–<500. Nilai benar adalah **246** (aturan pembulatan ARB ke atas ke
+   fraksi valid).
+
 ## 1. Ringkasan
 
 Website publik berbahasa Indonesia tentang saham IPO di Bursa Efek Indonesia. Fitur inti:

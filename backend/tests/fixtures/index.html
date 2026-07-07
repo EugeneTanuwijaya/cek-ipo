@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>IPO | e-IPO</title>
+    <meta name="csrf-param" content="_eipo_csrf">
+<meta name="csrf-token" content="_P-1o2R6dQmLDJ01JrvKtExc50MkkyjjU4hgU3ve0huVntbnXBQaRMxF7XNy7YDtNB2Cc17bcoIi6w8JFLWjVw==">
+
+<link href="http://e-ipo.co.id/id/ipo/index" rel="canonical">
+<link href="/assets/fff56328/css/bootstrap.css?v=1783141243" rel="stylesheet">
+<link href="/assets/653e159a/sweetalert2.min.css?v=1783141243" rel="stylesheet">
+<link href="/css/google-fonts.css?v=1780646275" rel="stylesheet">
+<link href="/css/font-awesome.css?v=1780646275" rel="stylesheet">
+<link href="/style.css?v=1780646276" rel="stylesheet">
+<link href="/css/dark.css?v=1780646275" rel="stylesheet">
+<link href="/css/font-icons.css?v=1780646275" rel="stylesheet">
+<link href="/css/animate.css?v=1780646275" rel="stylesheet">
+<link href="/css/responsive.css?v=1780646275" rel="stylesheet">
+<link href="/css/custom_s.css?v=1780646275" rel="stylesheet">
+<link href="/css/components/radio-checkbox.css?v=1780646275" rel="stylesheet">
+<link href="/css/site.css?v=1780646275" rel="stylesheet">
+<script src="/js/apm.js?v=1780646276"></script>
+<script src="https://rum.e-ipo.co.id/rumcollector/egrum.js" async></script></head>
+<body class="stretched" data-loader="7" data-loader-color="#C02942" data-loader-timeout="2000">
+<div id="wrapper" class="clearfix">
+    <header id="header" class="full-header">
+        <div id="header-wrap">
+            <div class="container clearfix">
+                <div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
+                <div id="logo">
+                    <a href="#" class="standard-logo-ojk"><img class="stan" src="/images/ojk.png" alt=""></a>
+                    <a href="#" class="standard-logo-idx"><img class="stan" src="/images/idx_logo.png" alt=""></a>
+                    <a href="#" class="standard-logo-kpei"><img class="stan logo-kpei" src="/images/kpei_1.png" alt=""></a>
+                    <a href="#"  class="standard-logo-ksei"><img class="stan" src="/images/ksei_1.png" alt=""></a>
+                </div>
+                <nav id="primary-menu">
+                    <ul>
+                        <li><a class="link-red" href="/id/home">Beranda</a></li>
+                        <li><a class="link-red" href="/id/announcement">Pengumuman</a></li>
+                                                <li><a class="link-red" href="/id/faq">FAQ</a></li>
+                        <li><a class="link-red" href="/id/contact-us">Hubungi Kami</a></li>
+                                                <li class="hidden-xs hidden-sm"><a href="#">|</a></li>
+                        <li><a class="link-red" href="/id/login">Login</a></li>
+                        <li><a class="link-red" href="/id/register">Daftar</a></li>
+                        <li class="hidden-xs hidden-sm"><a href="#">|</a></li>
+                                                                        <li><a href="/id/ipo/index" class="indonesia">
+                                <img src="/images/flag/id.svg" alt="Bahasa Indonesia" title="" data-toggle="tooltip" data-placement="bottom"  data-original-title="Bahasa Indonesia">
+                            </a></li>
+                        <li><a href="/en/ipo/index" class="english">
+                                <img src="/images/flag/en.svg" alt="English Language" title="" data-toggle="tooltip" data-placement="bottom"  data-original-title="English Language">
+                            </a></li>
+                    </ul>
+                    <div id="top-search">
+                        <a href="#" id="top-search-trigger"><i class="icon-search3"></i><i class="icon-line-cross"></i></a>
+                        <form action="/id/ipo/index" method="get">
+                            <input type="text" name="query" class="form-control" value="" placeholder="Cari IPO...">
+                        </form>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section id="page-title">
+    <div class="container clearfix">
+                <ul class="breadcrumb"><li><a href="/">Beranda</a></li>
+<li class="active">IPO</li>
+</ul>    </div>
+</section>
+<section class="content">
+    <div class="content-wrap">
+        <div class="container clearfix">
+                        
+<div class="row add-filter">
+    <div class="col-md-3">
+        <label for="status_id"><i class="fa fa-filter" aria-hidden="true"></i> Filter</label>        <select id="status_id" class="form-control" name="status_id">
+<option value="">- Semua Periode -</option>
+<option value="1">Pre-Effective</option>
+<option value="2">Book Building</option>
+<option value="8">Waiting For Offering</option>
+<option value="3">Offering</option>
+<option value="4">Allotment</option>
+<option value="5">Closed</option>
+<option value="6">Postpone</option>
+<option value="7">Canceled</option>
+</select>    </div>
+    <div class="col-md-3">
+        <label for='[]'><i class="fa fa-sort" aria-hidden="true"></i> Sortir</label>        <select id="sort" class="form-control" name="sort">
+<option value="" selected>- Urutkan -</option>
+<option value="company_name">Nama Emiten A-Z</option>
+<option value="-company_name">Nama Emiten Z-A</option>
+<option value="code">Kode Emiten A-Z</option>
+<option value="-code">Kode Emiten Z-A</option>
+<option value="-updated_at">Paling Baru</option>
+<option value="updated_at">Paling Lama</option>
+<option value="-listing_date">Tanggal Selesai</option>
+</select>    </div>
+    <div class="col-md-3">
+        <label>&nbsp;</label>        <input type="text" id="query" class="form-control" name="query" placeholder="Cari">    </div>
+    <div class="col-md-3 text-right">
+            <a class="grid-icon link-red" href="/id/ipo/index?view=grid" data-pjax="0"><i class="fa fa-th" aria-hidden="true"></i></a>            <a class="list-icon gray" href="/id/ipo/index?view=list" data-pjax="0"><i class="fa fa-list" aria-hidden="true"></i></a>    </div>
+</div>
+
+<div id="ipo-list" data-pjax-container="" data-pjax-push-state data-pjax-timeout="10000">        <div id="w0" class="list-view"><div class='row'><div data-key="349"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-4">
+        <div class="pricing-title">
+            <h3>Closed</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=349" alt="JELI">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Niramas Utama Tbk<br>(JELI)<br><span class="label " style="color:white;background-color:ForestGreen;">Syariah</span></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w1"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Consumer Non-Cyclicals</p></li>
+<li><h5 class="nobottommargin">Harga Final</h5><p class="notopmargin">Rp 900</p></li>
+<li><h5 class="nobottommargin">Tanggal Pencatatan</h5><p class="notopmargin">07 Jul 2026</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">2.660.000 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=349&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=349" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/349/jeli-pt-niramas-utama-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="352"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-4">
+        <div class="pricing-title">
+            <h3>Closed</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=352" alt="JECX">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Nitrasanata Dharma Tbk<br>(JECX)<br><span class="label " style="color:white;background-color:ForestGreen;">Syariah</span></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w2"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Healthcare</p></li>
+<li><h5 class="nobottommargin">Harga Final</h5><p class="notopmargin">Rp 1.250</p></li>
+<li><h5 class="nobottommargin">Tanggal Pencatatan</h5><p class="notopmargin">07 Jul 2026</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">4.879.835 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=352&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=352" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/352/jecx-pt-nitrasanata-dharma-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="351"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-2">
+        <div class="pricing-title">
+            <h3>Offering</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=351" alt="EMMI">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT ESA MEDIKA MANDIRI TBK<br>(EMMI)<br></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w3"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Healthcare</p></li>
+<li><h5 class="nobottommargin">Periode Penawaran</h5><p class="notopmargin">02 Jul 2026 - 06 Jul 2026</p></li>
+<li><h5 class="nobottommargin">Harga Penawaran</h5><p class="notopmargin">Rp 470</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">5.228.570 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=351&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=351" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/351/emmi-pt-esa-medika-mandiri-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="353"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-2">
+        <div class="pricing-title">
+            <h3>Offering</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=353" alt="BACH">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Bach Multi Global Tbk.<br>(BACH)<br><span class="label " style="color:white;background-color:ForestGreen;">Syariah</span></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w4"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Industrials</p></li>
+<li><h5 class="nobottommargin">Periode Penawaran</h5><p class="notopmargin">02 Jul 2026 - 06 Jul 2026</p></li>
+<li><h5 class="nobottommargin">Harga Penawaran</h5><p class="notopmargin">Rp 442</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">6.150.000 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=353&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=353" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/353/bach-pt-bach-multi-global-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="354"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-2">
+        <div class="pricing-title">
+            <h3>Offering</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=354" alt="RANS">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Rans Entertainmen Indonesia Tbk<br>(RANS)<br></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w5"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Consumer Cyclicals</p></li>
+<li><h5 class="nobottommargin">Periode Penawaran</h5><p class="notopmargin">02 Jul 2026 - 08 Jul 2026</p></li>
+<li><h5 class="nobottommargin">Harga Penawaran</h5><p class="notopmargin">Rp 170</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">25.250.000 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=354&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=354" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/354/rans-pt-rans-entertainmen-indonesia-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="350"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-2">
+        <div class="pricing-title">
+            <h3>Offering</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=350" alt="PRDL">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Prodia Diagnostic Line Tbk<br>(PRDL)<br></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w6"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Healthcare</p></li>
+<li><h5 class="nobottommargin">Periode Penawaran</h5><p class="notopmargin">01 Jul 2026 - 07 Jul 2026</p></li>
+<li><h5 class="nobottommargin">Harga Penawaran</h5><p class="notopmargin">Rp 120</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">5.229.000 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=350&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=350" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/350/prdl-pt-prodia-diagnostic-line-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="348"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-4">
+        <div class="pricing-title">
+            <h3>Closed</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=348" alt="WBSA">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT BSA Logistics Indonesia Tbk<br>(WBSA)<br><span class="label " style="color:white;background-color:ForestGreen;">Syariah</span></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w7"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Transportation &amp; Logistic</p></li>
+<li><h5 class="nobottommargin">Harga Final</h5><p class="notopmargin">Rp 168</p></li>
+<li><h5 class="nobottommargin">Tanggal Pencatatan</h5><p class="notopmargin">10 Apr 2026</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">18.000.000 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=348&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=348" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/348/wbsa-pt-bsa-logistics-indonesia-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="347"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-4">
+        <div class="pricing-title">
+            <h3>Closed</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=347" alt="SUPA">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Super Bank Indonesia Tbk<br>(SUPA)<br></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w8"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Financials</p></li>
+<li><h5 class="nobottommargin">Harga Final</h5><p class="notopmargin">Rp 635</p></li>
+<li><h5 class="nobottommargin">Tanggal Pencatatan</h5><p class="notopmargin">17 Dec 2025</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">44.066.123 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=347&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=347" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/347/supa-pt-super-bank-indonesia-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="346"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-4">
+        <div class="pricing-title">
+            <h3>Closed</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=346" alt="RLCO">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Abadi Lestari Indonesia Tbk<br>(RLCO)<br></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w9"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Consumer Non-Cyclicals</p></li>
+<li><h5 class="nobottommargin">Harga Final</h5><p class="notopmargin">Rp 168</p></li>
+<li><h5 class="nobottommargin">Tanggal Pencatatan</h5><p class="notopmargin">08 Dec 2025</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">6.250.000 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=346&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=346" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/346/rlco-pt-abadi-lestari-indonesia-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="345"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-4">
+        <div class="pricing-title">
+            <h3>Closed</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=345" alt="PJHB">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Pelayaran Jaya Hidup Baru Tbk.<br>(PJHB)<br><span class="label " style="color:white;background-color:ForestGreen;">Syariah</span></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w10"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Transportation &amp; Logistic</p></li>
+<li><h5 class="nobottommargin">Harga Final</h5><p class="notopmargin">Rp 330</p></li>
+<li><h5 class="nobottommargin">Tanggal Pencatatan</h5><p class="notopmargin">06 Nov 2025</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">4.800.000 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=345&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=345" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/345/pjhb-pt-pelayaran-jaya-hidup-baru-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="344"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-4">
+        <div class="pricing-title">
+            <h3>Closed</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=344" alt="EMAS">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Merdeka Gold Resources Tbk<br>(EMAS)<br></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w11"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Basic Materials</p></li>
+<li><h5 class="nobottommargin">Harga Final</h5><p class="notopmargin">Rp 2.880</p></li>
+<li><h5 class="nobottommargin">Tanggal Pencatatan</h5><p class="notopmargin">23 Sep 2025</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">16.180.233 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=344&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=344" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/344/emas-pt-merdeka-gold-resources-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div>
+<div data-key="337"><div class="col-md-3">
+    <div class="pricing-box margin-top30 best pricing-box-4">
+        <div class="pricing-title">
+            <h3>Closed</h3>
+        </div>
+        <div class="padding10">
+            <img class="img-list" src="/id/pipeline/get-logo?id=337" alt="CHEK">        </div>
+        <div class="padding5">
+                <h5 class="nobottommargin">PT Diastika Biotekindo Tbk<br>(CHEK)<br><span class="label " style="color:white;background-color:ForestGreen;">Syariah</span></h5>
+        </div>
+        <div class="pricing-features">
+        <ul id="w12"><li><h5 class="nobottommargin">Sektor</h5><p class="notopmargin">Healthcare</p></li>
+<li><h5 class="nobottommargin">Harga Final</h5><p class="notopmargin">Rp 128</p></li>
+<li><h5 class="nobottommargin">Tanggal Pencatatan</h5><p class="notopmargin">10 Jul 2025</p></li>
+<li><h5 class="nobottommargin">Saham Ditawarkan</h5><p class="notopmargin">8.150.000 Lot</p></li>
+<li><h5 class="nobottommargin">Prospektus</h5><p class="notopmargin"><a href="/id/pipeline/get-propectus-file?id=337&amp;type=" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="Unduh Prospektus" data-pjax="0"><i class="fa fa-file-pdf-o text-danger font-25" aria-hidden="true"></i></a></p></li>
+<li><h5 class="nobottommargin">Informasi Lainnya</h5><p class="notopmargin"><a href="/id/pipeline/get-additional-info?id=337" target="_blank" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-pjax="0" data-content="Unduh Informasi Tambahan"><i class="fa fa-file-pdf-o text-info font-25" aria-hidden="true"></i></a></p></li></ul>        </div>
+        <div class="pricing-action">
+            <a class="button button-3d button-small notopmargin  button-rounded button-dirtygreen" href="/id/ipo/337/chek-pt-diastika-biotekindo-tbk" data-pjax="0">Info lebih lanjut</a>        </div>
+    </div>
+</div></div></div>
+<div class='row margin-top20'><div class='col-md-2'></div><div class='col-md-3'><div class="summary"></div></div><div class='col-md-7'><ul class="pagination"><li class="first disabled"><span><</span></li>
+<li class="active"><a href="/id/ipo/index?page=1&amp;per-page=12" data-page="0">1</a></li>
+<li><a href="/id/ipo/index?page=2&amp;per-page=12" data-page="1">2</a></li>
+<li><a href="/id/ipo/index?page=3&amp;per-page=12" data-page="2">3</a></li>
+<li><a href="/id/ipo/index?page=4&amp;per-page=12" data-page="3">4</a></li>
+<li><a href="/id/ipo/index?page=5&amp;per-page=12" data-page="4">5</a></li>
+<li><a href="/id/ipo/index?page=6&amp;per-page=12" data-page="5">6</a></li>
+<li><a href="/id/ipo/index?page=7&amp;per-page=12" data-page="6">7</a></li>
+<li><a href="/id/ipo/index?page=8&amp;per-page=12" data-page="7">8</a></li>
+<li><a href="/id/ipo/index?page=9&amp;per-page=12" data-page="8">9</a></li>
+<li><a href="/id/ipo/index?page=10&amp;per-page=12" data-page="9">10</a></li>
+<li class="last"><a href="/id/ipo/index?page=21&amp;per-page=12" data-page="20">></a></li></ul></div></div></div></div>        </div>
+    </div>
+</section>
+
+    <footer id="footer" class="dark">
+        <div id="copyrights">
+            <div class="container clearfix">
+                <div class="col_half">
+                    Copyrights &copy; 2018 | Indonesia Stock Exchange<br>
+                    <div class="copyright-links">
+                        <a href="/id/pages/privacy-policy">Kebijakan Privasi</a>                        / 
+                        <a href="/id/pages/term-of-use">Ketentuan Penggunaan</a>                        /
+                        <a href="/id/pages/legal">Legal</a>                    </div>
+                                    </div>
+                <div class="col_half col_last tright">
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+<a id="floating-btn" href="http://wa.me/6281181150515" target="_blank"><i class="fa fa-whatsapp"></i></a><div id="gotoTop" class="icon-angle-up"></div>
+<script src="/assets/b77c30db/jquery.js?v=1783141243"></script>
+<script src="/assets/26861a43/yii.js?v=1783141243"></script>
+<script src="/assets/8c905838/jquery.pjax.js?v=1783142141"></script>
+<script src="/assets/653e159a/sweetalert2.all.min.js?v=1783141243"></script>
+<script src="/assets/45c61c44/moment-with-locales.min.js?v=1783141243"></script>
+<script src="/js/jquery-migrate-3.3.2.min.js?v=1780646276"></script>
+<script src="/js/plugins.js?v=1780646276"></script>
+<script src="/js/functions.js?v=1780646276"></script>
+<script src="/js/app.js?v=1780646276"></script>
+<script>jQuery(function ($) {
+function runFilter(){var param={'status_id':$('#status_id').val(),'sort':$('#sort').val(),'view':'grid','query':$('#query').val(),'per-page':$('select[name="per-page"]').val()}
+$.pjax({url:'/id/ipo/index?'+$.param(param),container:'#ipo-list'});}$(document).on('change','.add-filter select, .add-filter input, select[name="per-page"]',function(e){runFilter();});
+jQuery(document).pjax("#ipo-list a",{"push":true,"replace":false,"timeout":10000,"scrollTo":false,"container":"#ipo-list"});jQuery(document).off("submit","#ipo-list form[data-pjax]").on("submit","#ipo-list form[data-pjax]",function(event){jQuery.pjax.submit(event,{"push":true,"replace":false,"timeout":10000,"scrollTo":false,"container":"#ipo-list"});});
+});</script><script>
+$(window).scroll(function () {
+    let vertical = $(this).scrollTop();   
+    let bottom = (vertical > 440 && screen.width > 500) ? '90px' : '30px'; 
+    $('#floating-btn').css({'bottom': bottom});
+});
+</script>
+</body>
+</html>
