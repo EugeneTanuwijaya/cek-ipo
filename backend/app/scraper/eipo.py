@@ -51,8 +51,9 @@ def sync_ipos(db: Session, fetch_fn=fetch) -> ScrapeRun:
     warnings = []
     try:
         entries = parse_index(fetch_fn(INDEX_URL))
-        listed = {i.eipo_id for i in db.query(Ipo).filter(Ipo.status == "listed")}
-        todo = [e for e in entries if e.eipo_id not in listed]
+        # listed & cancelled bersifat final: tidak di-scrape ulang.
+        final = {i.eipo_id for i in db.query(Ipo).filter(Ipo.status.in_(["listed", "cancelled"]))}
+        todo = [e for e in entries if e.eipo_id not in final]
         for e in todo:
             try:
                 upsert_detail(db, e.eipo_id, parse_detail(fetch_fn(e.url)), source_url=e.url)

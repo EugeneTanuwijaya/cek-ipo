@@ -7,6 +7,7 @@ const STATUS_LABEL: Record<string, string> = {
   offering: 'Penawaran',
   allotment: 'Penjatahan',
   listed: 'Listed',
+  cancelled: 'Dibatalkan',
 };
 
 const STATUS_CLASS: Record<string, string> = {
@@ -14,6 +15,7 @@ const STATUS_CLASS: Record<string, string> = {
   offering: 'bg-amber-100 text-amber-800',
   allotment: 'bg-purple-100 text-purple-800',
   listed: 'bg-green-100 text-green-800',
+  cancelled: 'bg-gray-200 text-gray-600',
 };
 
 export default function IpoCard({ ipo }: { ipo: IpoSummary }) {

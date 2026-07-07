@@ -230,9 +230,9 @@ def _underwriters(soup: BeautifulSoup) -> list[dict]:
 
 
 # Site status labels (see the "status_id" filter options on the index page)
-# mapped to the plan's canonical Ipo.status values. Labels with no clear
-# canonical equivalent (Postpone, Canceled) map to None -- Task 5 decides
-# what to do with those.
+# mapped to the plan's canonical Ipo.status values, termasuk "cancelled"
+# untuk penawaran yang dibatalkan/ditunda (verified: eipo 300 CABR-C1 dan
+# 89 NPII menampilkan h5.panel-heading "Canceled").
 #
 # Fixture coverage: "closed" is verified by detail_347.html (SUPA) and
 # "allotment" by detail_351.html (EMMI). The remaining mappings
@@ -246,6 +246,12 @@ _STATUS_MAP = {
     "offering": "offering",
     "allotment": "allotment",
     "closed": "listed",
+    # Penawaran yang tidak berlanjut; tanpa mapping ini status jatuh ke None
+    # -> default model "bookbuilding" -> IPO batal muncul di daftar aktif.
+    "canceled": "cancelled",
+    "cancelled": "cancelled",
+    "postpone": "cancelled",
+    "postponed": "cancelled",
 }
 
 EMPTY = dict(

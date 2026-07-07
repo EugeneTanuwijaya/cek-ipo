@@ -110,6 +110,15 @@ def test_parse_detail_explicit_lead_label():
     assert by_code["BB"]["is_lead"] is False
 
 
+def test_parse_detail_cancelled_status():
+    # Regresi: label "Canceled" (mis. eipo 300 CABR-C1, 89 NPII) dulu tak
+    # dikenal _STATUS_MAP -> status None -> default DB "bookbuilding" ->
+    # IPO batal muncul di daftar "Sedang Berlangsung".
+    for label in ("Canceled", "Cancelled", "Postpone"):
+        d = parse_detail(f'<html><body><h5 class="panel-heading">{label}</h5></body></html>')
+        assert d["status"] == "cancelled", label
+
+
 def test_parse_detail_missing_fields_are_none():
     d = parse_detail("<html><body>halaman kosong</body></html>")
     assert d["ticker"] is None and d["final_price"] is None
