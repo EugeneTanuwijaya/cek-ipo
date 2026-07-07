@@ -3,6 +3,7 @@ uvicorn[standard]
 sqlalchemy
 apscheduler
 requests
+curl_cffi
 beautifulsoup4
 pydantic-settings
 pytest
