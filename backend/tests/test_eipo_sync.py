@@ -79,3 +79,36 @@ def test_failed_fetch_logged_data_kept(session):
     run = sync_ipos(session, fetch_fn=boom)
     assert run.status == "failed" and "down" in run.message
     assert session.query(Ipo).count() == n            # data lama utuh
+
+
+def test_run_level_failure_rolls_back_before_final_commit(session, monkeypatch):
+    # Regression: a DB-level failure at the run level (e.g. inside
+    # parse_index/fetch_fn, before the per-item loop even starts) must not
+    # leave the session's transaction poisoned, or the final db.commit() at
+    # the end of sync_ipos would itself raise -- leaving the ScrapeRun row
+    # stuck at status "running" forever (silently stale /api/health).
+    #
+    # A fully faithful reproduction would need a fetch_fn that corrupts the
+    # SQLAlchemy transaction mid-flight (e.g. issuing an invalid raw SQL
+    # statement on the same session) and then raises, so the exception
+    # reaches sync_ipos' run-level `except` with a truly broken transaction.
+    # That is fiddly to make deterministic across SQLAlchemy/SQLite
+    # versions, so instead we take the acceptable alternative suggested in
+    # review: spy on `db.rollback` and assert the run-level except path
+    # actually calls it when fetch_fn raises before any per-item processing
+    # happens (so this call can only come from the run-level except, not
+    # the per-item one).
+    calls = []
+    orig_rollback = session.rollback
+    def spy_rollback():
+        calls.append(True)
+        orig_rollback()
+    monkeypatch.setattr(session, "rollback", spy_rollback)
+
+    def boom(url):
+        raise RuntimeError("down")
+
+    run = sync_ipos(session, fetch_fn=boom)
+
+    assert run.status == "failed"
+    assert calls, "expected db.rollback() to be called from the run-level except"

@@ -66,6 +66,11 @@ def sync_ipos(db: Session, fetch_fn=fetch) -> ScrapeRun:
         run.status = "partial" if warnings else "success"
         run.message = "; ".join(warnings) or None
     except Exception as ex:  # run-level: gagal total, data lama utuh
+        # A DB-level failure here (e.g. inside parse_index/fetch_fn after a
+        # partial flush) leaves the session's transaction unusable; roll it
+        # back so the final db.commit() below doesn't itself raise and leave
+        # this ScrapeRun stuck at status "running" (silently stale /api/health).
+        db.rollback()
         run.status = "failed"
         run.message = str(ex)
     run.finished_at = datetime.now(timezone.utc)

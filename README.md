@@ -110,11 +110,36 @@ di volume Docker `ipo-data` (mount ke `/data`) agar persist antar rebuild.
 Scheduler (sinkronisasi harian 06:00 & 18:00 WIB) berjalan otomatis di
 container backend — jangan set `DISABLE_SCHEDULER` di compose produksi.
 
-Cek kesehatan setelah deploy:
+Backfill awal (mengisi database dari kosong): scheduler hanya menjalankan
+sinkronisasi harian (yang cuma membaca halaman pertama index e-IPO), jadi
+arsip penuh perlu diisi **sekali** lewat perintah manual di dalam container,
+setelah `docker compose up -d`:
 
 ```bash
-curl http://localhost/api/health     # -> {"status":"ok", "last_scrapes": {...}}
-curl -I http://localhost/            # -> 200 (beranda, boleh dalam kondisi data kosong)
+docker compose exec backend python -m app.scraper.initial
+```
+
+Perintah ini menulis ke volume Docker `ipo-data` (bukan `backend/data/` di
+host — itu cuma dipakai saat development lokal tanpa Docker).
+
+**Peringatan volume basi (stale volume):** jika volume `ipo-data` dibuat oleh
+build sebelum tag `v0.1.0`, buang dulu sebelum deploy versi baru — data harga
+hari-1 lama dihitung dengan aturan auto rejection yang salah (multiplier 2x,
+sudah dikoreksi ke 1x di `v0.1.0`) dan **tidak akan diperbarui otomatis** oleh
+sinkronisasi harian (sinkronisasi hanya mengisi baris yang belum ada, tidak
+menghitung ulang baris lama):
+
+```bash
+docker compose down
+docker volume rm <project>_ipo-data   # ganti <project> sesuai nama direktori/project Compose
+```
+
+Cek kesehatan setelah deploy (pakai domain asli, bukan `localhost` — kecuali
+`DOMAIN=http://localhost` yang di-set khusus untuk uji lokal tanpa TLS):
+
+```bash
+curl https://$DOMAIN/api/health      # -> {"status":"ok", "last_scrapes": {...}}
+curl -I https://$DOMAIN/             # -> 200 (beranda, boleh dalam kondisi data kosong)
 ```
 
 Update ke versi baru:
