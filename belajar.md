@@ -314,6 +314,101 @@ boot = aplikasi bangkit sendiri setelah server restart. Ini wajib untuk produksi
 
 ---
 
+## Langkah 9 — Simpan perubahan ke GitHub (commit & push via SSH)
+
+Perbaikan `curl_cffi` di Langkah 6 tadinya baru ada **di server ini saja**. Kalau
+server hilang, perbaikan ikut hilang. Maka simpan permanen ke GitHub.
+
+### 9a. Commit dulu (menyimpan snapshot di dalam repo lokal)
+
+```bash
+cd /home/ubuntu/cek-ipo
+git status                 # lihat file apa yang berubah
+git add backend/app/scraper/http.py backend/requirements.txt belajar.md
+git commit -m "fix(scraper): pakai curl_cffi agar lolos Cloudflare"
+```
+
+Catatan: `.env` **tidak** ikut ter-commit karena ada di `.gitignore` — memang
+sengaja, jangan pernah commit rahasia.
+
+> Praktik yang dipakai di sini: perubahan ditaruh di **branch** terpisah
+> (`git checkout -b fix/cloudflare-scraper-curl-cffi`) dulu, bukan langsung ke
+> `master`. Tujuannya supaya bisa di-review lewat Pull Request sebelum masuk ke
+> cabang utama. Untuk repo pribadi, commit langsung ke `master` juga boleh.
+
+### 9b. Otentikasi ke GitHub — kenapa perlu SSH key
+
+`git push` mengirim commit ke GitHub, tapi GitHub perlu yakin **kamu memang kamu**.
+GitHub sudah lama tidak menerima login password biasa untuk Git. Dua cara umum:
+
+- **SSH key** (dipakai di sini) — sepasang kunci: *private key* rahasia yang tetap
+  di server, dan *public key* yang kamu daftarkan ke GitHub. Saat push, server
+  membuktikan identitas pakai private key tanpa mengirim rahasia apa pun. Sekali
+  set, tidak perlu ketik apa-apa lagi.
+- **Personal Access Token (PAT)** — token rahasia berbentuk teks yang dipakai
+  sebagai ganti password lewat HTTPS. Lebih ringkas tapi tokennya rahasia dan
+  harus dijaga.
+
+**Analogi:** SSH key seperti sidik jari — GitHub menyimpan "foto sidik jarimu"
+(public key); saat masuk, kamu menempelkan jari asli (private key). Sidik jari
+aslinya tidak pernah berpindah tangan.
+
+### 9c. Cara mendaftarkan SSH key ke GitHub
+
+1. Lihat **public** key di server (yang berakhiran `.pub`, aman untuk dibagikan):
+   ```bash
+   cat ~/.ssh/id_ed25519.pub
+   # contoh output: ssh-ed25519 AAAAC3Nza...IYyImQ nama-key
+   ```
+   > Kalau belum punya key sama sekali, buat dengan:
+   > `ssh-keygen -t ed25519 -C "email@kamu.com"` (tekan Enter mengikuti default).
+   > **Jangan pernah** menampilkan/membagikan file tanpa `.pub` (itu private key).
+
+2. Buka **https://github.com/settings/ssh/new**, isi **Title** bebas, tempel
+   isi public key tadi, klik **Add SSH key**.
+
+3. Arahkan remote repo ke alamat SSH (bukan HTTPS):
+   ```bash
+   git remote set-url origin git@github.com:USERNAME/NAMA-REPO.git
+   ```
+   Beda formatnya:
+   - HTTPS: `https://github.com/USER/REPO.git` → minta username+token saat push
+   - SSH:   `git@github.com:USER/REPO.git`     → pakai key, tanpa ketik apa-apa
+
+4. Pertama kali konek, server belum kenal "sidik jari" GitHub. Tambahkan supaya
+   tidak muncul peringatan "Host key verification failed":
+   ```bash
+   ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
+   ```
+
+5. Tes otentikasinya:
+   ```bash
+   ssh -T git@github.com
+   # sukses -> "Hi USERNAME! You've successfully authenticated, ..."
+   ```
+
+### 9d. Push
+
+```bash
+git push -u origin fix/cloudflare-scraper-curl-cffi
+# -u = set upstream, jadi lain kali cukup `git push` saja
+```
+
+Kalau pakai branch, GitHub akan memberi link untuk membuat **Pull Request**.
+Buka link itu → **Create pull request** → **Merge** untuk menggabungkan ke `master`.
+
+**Pelajaran penting:**
+- **Public key** boleh disebar (didaftarkan ke GitHub, ditaruh di server).
+  **Private key** (file tanpa `.pub`) rahasia mutlak — jangan pernah dikirim ke
+  mana pun.
+- Satu key yang sama bisa dipakai untuk beberapa keperluan (di sini key-nya juga
+  dipakai untuk tunnel lain). Mendaftarkannya ke GitHub memberi server itu hak
+  push ke repo-mu — wajar untuk deploy, tapi sadari implikasinya.
+- `.env` dan rahasia lain tidak ikut ke GitHub karena `.gitignore`. Selalu cek
+  `git status` sebelum commit untuk memastikan tidak ada rahasia yang ikut.
+
+---
+
 ## Hal-hal penting yang HARUS kamu tahu
 
 1. **Security Group / Firewall itu terpisah dari server.** Membuka port 80 di
@@ -351,9 +446,10 @@ boot = aplikasi bangkit sendiri setelah server restart. Ini wajib untuk produksi
    Ingat jebakan Langkah 7: beranda mungkin perlu waktu (cache 1 jam) atau
    di-build dengan `--network` agar langsung tampil data segar.
 
-7. **Perubahan kode `curl_cffi` belum di-commit.** Perbaikan di Langkah 6 baru ada
-   di server ini, belum di GitHub. Kalau server ini hilang, perbaikan itu hilang.
-   Sebaiknya commit & push supaya tersimpan permanen.
+7. **Perbaikan `curl_cffi` sudah di-commit & push ke GitHub** (lihat Langkah 9),
+   di branch `fix/cloudflare-scraper-curl-cffi`. Langkah terakhir: buka Pull
+   Request-nya lalu **Merge ke `master`** supaya alur update biasa (`git pull`)
+   membawanya ke deploy. Selama belum di-merge, ia belum ada di `master`.
 
 8. **Scraping situs orang punya etika & risiko.** `curl_cffi` "menyamar" sebagai
    browser. Beri jeda antar-request (kode sudah melakukannya), jangan berlebihan,
