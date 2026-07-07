@@ -3,9 +3,25 @@ from sqlalchemy.orm import Session as SASession
 from app.models import Ipo, IpoPerformance
 from app.scraper.prices import sync_prices
 
-YAHOO_OK = {"chart": {"result": [{"timestamp": [1750000000, 1750086400],
-    "indicators": {"quote": [{"open": [420.0, 480.0], "high": [490.0, 500.0],
-                              "low": [400.0, 470.0], "close": [490.0, 495.0]}]}}], "error": None}}
+# Timestamps = 2026-06-01 & 2026-06-02 02:00 UTC (09:00 WIB, jam buka IDX)
+# agar bar pertama cocok dengan listing_date make_listed (2026-06-01).
+# Close 436 = tepat harga ARA hari-1 utk IPO 350 (350*1.25=437.5 -> fraksi 2
+# -> 436) sehingga lolos validasi bound dan day1_ara True.
+YAHOO_OK = {"chart": {"result": [{"timestamp": [1780279200, 1780365600],
+    "indicators": {"quote": [{"open": [400.0, 480.0], "high": [436.0, 500.0],
+                              "low": [390.0, 470.0], "close": [436.0, 495.0]}]}}], "error": None}}
+
+# Bar pertama 2026-09-01 — lebih dari MAX_LISTING_GAP_DAYS setelah listing
+# 2026-06-01 (kasus nyata: data Yahoo tidak mencakup hari-1 listing).
+YAHOO_WRONG_WINDOW = {"chart": {"result": [{"timestamp": [1788228000],
+    "indicators": {"quote": [{"open": [5000.0], "high": [5250.0],
+                              "low": [4900.0], "close": [5250.0]}]}}], "error": None}}
+
+# Tanggal benar (2026-06-01) tapi harga jauh di bawah floor ARB hari-1 utk
+# IPO 350 — pola data split-adjusted Yahoo (kasus riil: CUAN 220 -> 27.4).
+YAHOO_SPLIT_ADJUSTED = {"chart": {"result": [{"timestamp": [1780279200],
+    "indicators": {"quote": [{"open": [27.4], "high": [42.6],
+                              "low": [27.4], "close": [42.6]}]}}], "error": None}}
 
 def make_listed(session, **kw):
     d = dict(eipo_id=347, ticker="SUPA", final_price=350, status="listed",
@@ -18,10 +34,44 @@ def test_sync_prices_fills_day1(session):
     ipo = make_listed(session)
     run = sync_prices(session, http_get=lambda url: YAHOO_OK)
     perf = session.query(IpoPerformance).filter_by(ipo_id=ipo.id).one()
-    assert perf.day1_close == 490.0
-    assert perf.day1_ara is False           # ARA hari-1 utk 350 = 525
-    assert round(perf.day1_return_pct, 1) == 40.0
+    assert perf.day1_close == 436.0
+    assert perf.day1_ara is True            # ARA hari-1 utk 350 = 436 (1x, 25%)
+    assert round(perf.day1_return_pct, 1) == 24.6
     assert run.status == "success"
+
+def test_first_bar_far_from_listing_date_is_a_miss(session):
+    # Regresi untuk bug backfill: bar pertama yang bukan hari-1 listing
+    # (selisih > MAX_LISTING_GAP_DAYS) tidak boleh disimpan sebagai data
+    # hari-1 -- itu harga berbulan-bulan kemudian, return/ARA-nya korup.
+    make_listed(session)
+    run = sync_prices(session, http_get=lambda url: YAHOO_WRONG_WINDOW)
+    assert session.query(IpoPerformance).count() == 0
+    assert run.status == "partial"
+    assert "SUPA" in run.message
+
+
+def test_split_adjusted_prices_are_a_miss(session):
+    # Yahoo meng-adjust harga historis untuk stock split (kasus riil CUAN:
+    # IPO 220, "close hari-1" 42.6). Close di luar bound ARB..ARA hari-1
+    # secara fisik mustahil -> data tidak valid, jangan disimpan.
+    make_listed(session)
+    run = sync_prices(session, http_get=lambda url: YAHOO_SPLIT_ADJUSTED)
+    assert session.query(IpoPerformance).count() == 0
+    assert run.status == "partial"
+    assert "SUPA" in run.message
+
+
+def test_listed_without_listing_date_not_queried(session):
+    # Tanpa listing_date jendela period1/period2 tidak bisa dibangun --
+    # baris ini dilewati sama sekali (bukan miss, bukan error).
+    make_listed(session, listing_date=None)
+    calls = []
+    def counting(url): calls.append(url); return YAHOO_OK
+    run = sync_prices(session, http_get=counting)
+    assert calls == []
+    assert session.query(IpoPerformance).count() == 0
+    assert run.status == "success"
+
 
 def test_ticker_not_yet_on_yahoo_is_skipped(session):
     make_listed(session)
@@ -55,7 +105,7 @@ def test_fetch_failure_on_one_item_keeps_others(session):
     run = sync_prices(session, http_get=flaky)
     with SASession(session.get_bind()) as fresh:
         perf1 = fresh.query(IpoPerformance).filter_by(ipo_id=ipo1.id).one()
-        assert perf1.day1_close == 490.0
+        assert perf1.day1_close == 436.0
         assert fresh.query(IpoPerformance).count() == 1
     assert run.status == "partial"
     assert "GAGL" in run.message
@@ -77,6 +127,6 @@ def test_db_level_failure_isolated_per_item(session):
         return YAHOO_OK
     run = sync_prices(session, http_get=http_get)   # must not raise
     perf1 = session.query(IpoPerformance).filter_by(ipo_id=ipo1.id).one()
-    assert perf1.day1_close == 490.0                # item 1 committed, not lost
+    assert perf1.day1_close == 436.0                # item 1 committed, not lost
     assert run.status == "partial"
     assert "DUPL" in run.message

@@ -28,7 +28,7 @@ export default function KalkulatorPage() {
           <li>Rp200 &lt; harga ≤ Rp5.000: batas ARA 25%.</li>
           <li>Harga &gt; Rp5.000: batas ARA 20%.</li>
           <li>ARB (batas bawah) berlaku flat 15% untuk semua rentang harga.</li>
-          <li>Khusus hari pertama perdagangan (hari-1), baik batas ARA maupun ARB dikalikan 2× dari persentase normal di atas.</li>
+          <li>Batas hari pertama perdagangan (hari-1) memakai persentase normal di atas — terverifikasi dari data hari-1 IPO riil (mis. COIN +35%, EMAS +25% terkunci ARA).</li>
         </ul>
         <p className="text-gray-500">
           Sumber: Peraturan BEI Nomor II-A tentang Perdagangan Efek Bersifat Ekuitas.

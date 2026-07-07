@@ -13,13 +13,15 @@ def test_tick():
     assert tick_for(4999) == 10 and tick_for(5000) == 25
 
 def test_day1_ara_price():
-    assert day1_ara_price(100) == 170          # 100*1.70, fraksi 1
-    assert day1_ara_price(1000) == 1500        # 1000*1.50, fraksi 5
-    assert day1_ara_price(350) == 525          # 350*1.50=525, fraksi 5 (525 valid)
+    # DAY1_MULTIPLIER=1: hari-1 memakai persentase ARA normal (verifikasi
+    # empiris Task 16: COIN 100->135, EMAS 2880->3600, dst.).
+    assert day1_ara_price(100) == 135          # 100*1.35, fraksi 1
+    assert day1_ara_price(1000) == 1250        # 1000*1.25, fraksi 5
+    assert day1_ara_price(350) == 436          # 350*1.25=437.5 -> fraksi 2 -> 436
 
 def test_hit_ara_day1():
-    assert hit_ara_day1(350, 525) is True
-    assert hit_ara_day1(350, 500) is False
+    assert hit_ara_day1(350, 436) is True
+    assert hit_ara_day1(350, 434) is False
 
 def test_round_down_to_tick_truncates():
     from app.rules import round_down_to_tick
@@ -29,4 +31,4 @@ def test_round_down_to_tick_truncates():
 
 def test_day1_ara_price_rounds_down():
     from app.rules import day1_ara_price
-    assert day1_ara_price(199) == 338         # 199*1.70=338.3 -> tick 2 -> 338
+    assert day1_ara_price(199) == 268         # 199*1.35=268.65 -> tick 2 -> 268

@@ -157,10 +157,12 @@ verifikasi aturan BEI II-A dan SEOJK 25/2025"):
   ARB 15% seragam untuk semua rentang berlaku sejak revisi 8 Apr 2025
   (sebelumnya mengikuti tier ARA), dikonfirmasi via siaran pers BEI dan
   liputan media pasca-8-Apr-2025, tidak ada perubahan lebih lanjut ditemukan
-  sampai Juli 2026. Multiplier hari pertama (2x) bersandar pada sumber
-  sekunder (bukan teks primer Kep-00003/BEI/04-2025 yang gagal diunduh
-  otomatis) — lihat komentar sitasi di `frontend/lib/rules.ts` untuk detail
-  dan catatan yang perlu diverifikasi ulang bila ada keraguan.
+  sampai Juli 2026. Batas hari pertama IPO memakai persentase normal
+  (multiplier 1x, bukan 2x seperti diklaim sejumlah sumber sekunder) —
+  dikonfirmasi empiris dari data hari-1 Yahoo Finance untuk 7 IPO yang ARA
+  hari pertama sepanjang 2025 (COIN 100→135 [+35%], EMAS 2880→3600 [+25%],
+  RLCO 168→226, dll., semua terkunci persis di harga ARA 1x) — lihat
+  komentar sitasi di `frontend/lib/rules.ts` untuk detail.
 - **Penjatahan Terpusat (SEOJK 25/SEOJK.04/2025)** — seluruh angka golongan
   IPO, alokasi minimum, dan tabel penyesuaian oversubscription diverifikasi
   langsung dari salinan resmi PDF di ojk.go.id (menggantikan SEOJK

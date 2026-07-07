@@ -13,18 +13,19 @@
 //   perubahan lebih lanjut ditemukan sampai Juli 2026 (satu-satunya berita
 //   terbaru, suara.com 5 Jul 2026, adalah USULAN yang HANYA menyasar Papan
 //   Pemantauan Khusus, belum berlaku, dan tidak memengaruhi konstanta ini).
-// - day1Multiplier 2x berlaku untuk ARA **dan** ARB pada hari pertama IPO:
-//   dikonfirmasi oleh sumber sekunder pasca-8-Apr-2025 (Kompas 14 Apr 2025,
-//   mediaperbankan.com Mei 2025, CNBC Indonesia) yang konsisten menyebut
-//   "2 (dua) kali dari persentase batasan Auto Rejection" tanpa membedakan
-//   ARA/ARB. CATATAN: teks resmi Kep-00055/BEI/03-2023 (berlaku sebelum revisi
-//   8 Apr 2025) sebenarnya menetapkan 1x (diturunkan dari 2x sejak 13 Mar
-//   2020); PDF resmi Kep-00003/BEI/04-2025 tidak berhasil diunduh langsung
-//   (wplibrary.co.id & idx.co.id memblokir akses otomatis dgn 403) sehingga
-//   nilai 2x saat ini bersandar pada sumber sekunder yang konsisten, bukan
-//   teks primer — perlu diverifikasi ulang bila ada keraguan.
+// - day1Multiplier 1x: batas hari-1 IPO memakai persentase auto rejection
+//   NORMAL, bukan 2x. Sesuai teks primer Kep-00055/BEI/03-2023 (1x sejak
+//   13 Mar 2020) dan DIKONFIRMASI EMPIRIS pada Task 16 (2026-07-07) dari
+//   data hari-1 Yahoo Finance untuk 7 IPO yang ARA di hari pertama —
+//   RATU (Jan 2025, pra-revisi) serta COIN/CDIA/BLOG (Jul 2025), EMAS
+//   (Sep 2025), RLCO (Des 2025) pasca-revisi Apr 2025 — semuanya terkunci
+//   PERSIS di harga ARA 1x (COIN 100→135 [+35%], EMAS 2880→3600 [+25%],
+//   RLCO 168→226, CDIA 190→256, BLOG 250→312, RATU 1150→1435) dengan OHLC
+//   rata; tidak ada yang bergerak ke arah batas 2x. Sumber sekunder yang
+//   menyebut "2 (dua) kali" (Kompas 14 Apr 2025, mediaperbankan.com,
+//   CNBC Indonesia) terbukti keliru terhadap data pasar riil.
 export const AUTO_REJECT = {
-  day1Multiplier: 2,
+  day1Multiplier: 1,
   minPrice: 50,
   araBands: [
     { maxPrice: 200, pct: 0.35 },
